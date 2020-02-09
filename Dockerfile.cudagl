@@ -1,0 +1,28 @@
+# FROM nvcr.io/nvidia/pytorch:19.11-py3
+# FROM pytorch/pytorch:1.2-cuda10.0-cudnn7-devel
+
+FROM nvidia/cudagl:10.0-devel-ubuntu16.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libcudnn7=7.6.2.24-1+cuda10.0  \
+    libcudnn7-dev=7.6.2.24-1+cuda10.0
+
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update && apt-get install -y python3-pip
+RUN apt-get update && apt-get install -y python3.7
+
+RUN python3.7 -m pip install torch==1.2
+RUN python3.7 -m pip install torchvision==0.4
+
+RUN apt-get update && apt-get install -y python3.7-dev
+
+WORKDIR /kaolin
+COPY . .
+
+ENV KAOLIN_HOME "/kaolin"
+
+RUN python3.7 -m pip install -r requirements.txt && \
+    python3.7 -m pip install .
+
+#    python3.7 setup.py install
